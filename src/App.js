@@ -6,23 +6,35 @@ import Card from './components/card'
 class App extends Component {
   constructor (props) {
     super(props)
-
+    const cardTotal = 5
     this.state = {
-      cards: [... new Array(5)]
+      cards: [... new Array(cardTotal)]
+        .map((c, i) => (
+          {
+            title: `Card ${i}`,
+            index: i,
+          }
+        )),
+      activeCard: cardTotal - 1,
     }
-    this.handleMouseDown = this.handleMouseDown.bind(this)
+    this.setPick = this.setPick.bind(this)
   }
 
-  handleMouseDown (e) {
-    e.target.style.background = 'red'
+  setPick (x) {
+    this.setState({ activeCard: x })
   }
+
   render() {
     return (
       <div className="App">
         <div className="cardWrapper">
         {
           this.state.cards
-            .map((c, i, a) => <Card active={ a.length === i + 1 }></Card>)
+            .map((c, i, a) => <Card
+              active={ this.state.activeCard === i }
+              info={ c }
+              handlePick={ this.setPick }
+            ></Card>)
         }
         </div>
       </div>
