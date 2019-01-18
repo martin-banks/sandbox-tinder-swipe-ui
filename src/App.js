@@ -16,24 +16,34 @@ class App extends Component {
           }
         )),
       activeCard: cardTotal - 1,
+      score: 0,
     }
     this.setPick = this.setPick.bind(this)
+    this.counter = this.counter.bind(this)
   }
 
   setPick (x) {
     this.setState({ activeCard: x })
   }
 
+  counter (val) {
+    const newScore = this.state.score + val
+    this.setState({ score: newScore})
+  }
+
   render() {
     return (
       <div className="App">
+        <h1>Score: { this.state.score }</h1>
         <div className="cardWrapper">
         {
           this.state.cards
             .map((c, i, a) => <Card
+              key={ `card-${i}` }
               active={ this.state.activeCard === i }
               info={ c }
               handlePick={ this.setPick }
+              updateScore={ this.counter }
             ></Card>)
         }
         </div>
