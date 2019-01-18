@@ -19,7 +19,8 @@ class Card extends Component {
     this.handleMouseDown = this.handleMouseDown.bind(this)
     this.handleMouseUp = this.handleMouseUp.bind(this)
     this.handleMouseMove = this.handleMouseMove.bind(this)
-    // this.animateReset = this.animateReset.bind(this)
+    this.resetPosition = this.resetPosition.bind(this)
+    this.animateReset = this.animateReset.bind(this)
   }
 
   handleMouseDown (e) {
@@ -38,28 +39,58 @@ class Card extends Component {
     if (this.state.x > window.innerWidth * 0.2 || this.state.x < window.innerWidth * -0.2) {
       this.props.handlePick(this.props.info.index - 1)
     } else {
-      this.animateReset()
+      this.resetPosition()
+    }
+
+    if (this.state.x > window.innerWidth * 0.2) {
+      this.props.updateScore(1)
+    } else if (this.state.x < window.innerWidth * -0.2) {
+      this.props.updateScore(-1)
     }
   }
 
-  animateOut () {}
 
-  animateReset () {
-    // const tick = 0 - this.state.x
+  animateReset ({ target, tick }) {
+    const newPos = this.state.x + tick
     this.setState({
-      x: 0 - this.state.w / 2,
+      x: newPos,
       r: 0,
     })
+    if (tick < 0 && this.state.x > target) {
+      window.requestAnimationFrame(() => {
+        this.animateReset({ tick, target })
+      })
+    } else if (tick > 0 && this.state.x < target) {
+      window.requestAnimationFrame(() => {
+        this.animateReset({ tick, target })
+      })
+    } else {
+      this.setState({ x: target })
+    }
+  }
+
+  resetPosition () {
+    // const tick = 0 - this.state.x
+    // const target = 0 - this.state.w / 2
+    // this.setState({
+    //   x: 0 - this.state.w / 2,
+    //   r: 0,
+    // })
+    const target = 0 - this.state.w / 2
+    const tick = this.state.x > target ? -30 : 30
+    this.animateReset({ tick, target })
   }
 
   handleMouseMove (e) {
     if (this.state.dragging && this.props.active) {
-      console.log(window.innerWidth, this.state.x)
       const x = e.pageX - (window.innerWidth / 2) - (this.state.w / 2)
       const r = ((e.pageX / (window.innerWidth / 2)) - 1) * 30
       this.setState({ x, r })
-      if (this.state.x > window.innerWidth * 0.2 || this.state.x < window.innerWidth * -0.2) {
+
+      if (this.state.x > (window.innerWidth * 0.2) - (this.state.w / 2)) {
         this.setState({ color: '#bada55' })
+      } else if (this.state.x < (window.innerWidth * -0.2) - (this.state.w / 2)) {
+        this.setState({ color: '#d11' })
       } else {
         this.setState({ color: 'lightgrey' })
       }
