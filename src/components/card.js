@@ -30,22 +30,25 @@ class Card extends Component {
       this.setState({
         dragging: true,
         scale: this.props.active ? 1.1 : 1,
-        zIndex: 100 - this.props.info.index,
+        zIndex: 100 - this.props.index,
       })
     }
   }
   handleMouseUp (e) {
     this.setState({ dragging: false, scale: 1 })
+    const { a, b, c } = this.props.info
+
     if (this.state.x > window.innerWidth * 0.2 || this.state.x < window.innerWidth * -0.2) {
-      this.props.handlePick(this.props.info.index - 1)
+      this.props.handlePick(this.props.index - 1)
     } else {
       this.resetPosition()
     }
-
+    
     if (this.state.x > window.innerWidth * 0.2) {
-      this.props.updateScore(1)
+      this.props.updateScore(a, b, c)
+      // this.props.updateScore(this.props.a)
     } else if (this.state.x < window.innerWidth * -0.2) {
-      this.props.updateScore(-1)
+      this.props.updateScore(a, b, c)
     }
   }
 
